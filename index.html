@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#2f6f4f" />
+  <title>葉爺爺葉奶奶的重訓筆記</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- 頂部狀態列（同步狀態 / 計時器） -->
+  <header id="topbar" class="topbar hidden">
+    <button id="btnBack" class="topbar__btn" aria-label="返回">‹ 返回</button>
+    <div id="topTitle" class="topbar__title">重訓筆記</div>
+    <div class="topbar__right">
+      <span id="timerDisplay" class="timer hidden">⏱ 00:00</span>
+      <button id="btnSync" class="topbar__btn topbar__btn--sync" aria-label="同步">⟳</button>
+    </div>
+  </header>
+
+  <!-- 主畫面容器 -->
+  <main id="app" class="app"></main>
+
+  <!-- 浮層（建議 / 對話框） -->
+  <div id="overlay" class="overlay hidden"></div>
+
+  <!-- 小提示 toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
