@@ -1287,8 +1287,13 @@ function renderCalendar(root) {
 route('dayDetail', (params) => {
   $topTitle.textContent = fmtDateHuman(params.date);
   const daySets = store.data.sets.filter(s => s.date === params.date);
+  const isAdmin = store.role === 'admin';
   const root = h(`<div></div>`);
   $app.appendChild(root);
+
+  if (isAdmin && daySets.length) {
+    root.appendChild(h(`<div class="prefill-note" style="margin-bottom:14px;">👑 管理者：點任何一筆紀錄就能幫忙修改或刪除</div>`));
+  }
 
   TRAINERS.forEach(trainer => {
     const ts = daySets.filter(s => s.trainer === trainer);
@@ -1315,11 +1320,23 @@ route('dayDetail', (params) => {
       const byEquip = {};
       list.forEach(s => { (byEquip[s.equipName] = byEquip[s.equipName] || []).push(s); });
       Object.entries(byEquip).forEach(([name, slist]) => {
-        const sets = slist.map((s, i) => `第${i + 1}組 ${s.weight}${s.unit}×${s.reps}下`).join('　');
-        partBlock.appendChild(h(`<div style="padding:8px 2px 0;">
-          <div><b>${esc(name)}</b></div>
-          <div class="muted" style="font-size:1rem;">${sets}</div>
-        </div>`));
+        const equipWrap = h(`<div style="padding:8px 2px 0;"><div><b>${esc(name)}</b></div></div>`);
+        if (isAdmin) {
+          // 管理者：每一筆變成可點擊修改
+          slist.forEach((s, i) => {
+            const row = h(`<button class="card" style="display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;gap:10px;margin-top:6px;padding:10px 12px;">
+              <span style="font-size:1rem;">第${i + 1}組 ${s.weight}${s.unit}×${s.reps}下　${rpeLabel(s.rpe)}</span>
+              <span style="color:var(--green);font-weight:800;white-space:nowrap;">✏️ 改</span>
+            </button>`);
+            row.addEventListener('click', () => go('editSet', { setId: s.id }));
+            equipWrap.appendChild(row);
+          });
+        } else {
+          // 一般使用者：純文字顯示
+          const sets = slist.map((s, i) => `第${i + 1}組 ${s.weight}${s.unit}×${s.reps}下`).join('　');
+          equipWrap.appendChild(h(`<div class="muted" style="font-size:1rem;">${sets}</div>`));
+        }
+        partBlock.appendChild(equipWrap);
       });
       $rows.appendChild(partBlock);
     });
